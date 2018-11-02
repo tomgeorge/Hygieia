@@ -19,6 +19,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.OAuth2ClientProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -98,6 +99,9 @@ public class DefaultHudsonClient implements HudsonClient {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd_HH-mm-ss";
 
+    @Autowired
+    OAuth2ClientProperties oAuth2ClientProperties;
+    
     @Autowired
     public DefaultHudsonClient(Supplier<RestOperations> restOperationsSupplier, HudsonSettings settings) {
         this.rest = restOperationsSupplier.get();
@@ -613,6 +617,7 @@ public class DefaultHudsonClient implements HudsonClient {
         LOG.debug("Enter makeRestCall " + sUrl);
         URI thisuri = URI.create(sUrl);
         String userInfo = thisuri.getUserInfo();
+        
 
         //get userinfo from URI or settings (in spring properties)
         if (StringUtils.isEmpty(userInfo)) {
@@ -650,6 +655,11 @@ public class DefaultHudsonClient implements HudsonClient {
             return rest.exchange(thisuri, HttpMethod.GET,
                     new HttpEntity<>(createHeaders(userInfo)),
                     String.class);
+        } else if (StringUtils.isNotEmpty(oAuth2ClientProperties.getClientSecret())) {
+        	return rest.exchange(thisuri, HttpMethod.GET,
+        			new HttpEntity<>(createOauth2Headers(oAuth2ClientProperties.getClientSecret())),
+        					String.class);
+        			
         } else {
             return rest.exchange(thisuri, HttpMethod.GET, null,
                     String.class);
@@ -672,6 +682,13 @@ public class DefaultHudsonClient implements HudsonClient {
                 userInfo.getBytes(StandardCharsets.US_ASCII));
         String authHeader = "Basic " + new String(encodedAuth);
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+        return headers;
+    }
+    
+    protected HttpHeaders createOauth2Headers(final String clientSecret) {
+        String authHeader = "Bearer " + new String(clientSecret);
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, authHeader);
         return headers;
