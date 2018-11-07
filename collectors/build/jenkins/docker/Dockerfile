@@ -2,21 +2,13 @@ FROM docker.io/openjdk:8-jre
 
 MAINTAINER Hygieia@capitalone.com
 
-RUN mkdir /hygieia /hygieia/config
-RUN pwd
-RUN ls -l 
+RUN mkdir /hygieia 
 
-ADD . /hygieia
-RUN ls -l /hygieia
-COPY *.jar /hygieia/
-COPY properties-builder.sh /hygieia/
+COPY deploymnets/*.jar /hygieia
 
 WORKDIR /hygieia
 
 VOLUME ["/hygieia/logs"]
 
-ENV PROP_FILE /hygieia/config/application.properties
-
-CMD ./properties-builder.sh && \
-  java -jar jenkins-build-collector*.jar --spring.config.location=$PROP_FILE
+CMD java -jar jenkins-build-collector*.jar 
 
