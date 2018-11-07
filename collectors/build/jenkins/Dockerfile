@@ -10,6 +10,7 @@ ENV PROP_FILE /hygieia/config/application.properties
 
 WORKDIR /hygieia
 
+RUN chown -R 1001:1001 /hygieia
 COPY target/*.jar /hygieia
 COPY docker/properties-builder.sh /hygieia/
 
