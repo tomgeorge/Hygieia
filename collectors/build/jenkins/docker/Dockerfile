@@ -4,7 +4,7 @@ MAINTAINER Hygieia@capitalone.com
 
 RUN mkdir /hygieia 
 
-COPY deploymnets/*.jar /hygieia
+COPY deployments/*.jar /hygieia
 
 WORKDIR /hygieia
 
