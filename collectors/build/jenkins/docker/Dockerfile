@@ -6,6 +6,8 @@ RUN mkdir /hygieia /hygieia/config
 RUN pwd
 RUN ls -l 
 
+ADD . /hygieia
+RUN ls -l /hygieia
 COPY *.jar /hygieia/
 COPY properties-builder.sh /hygieia/
 
