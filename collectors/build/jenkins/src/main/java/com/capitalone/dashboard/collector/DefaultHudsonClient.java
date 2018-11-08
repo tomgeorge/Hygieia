@@ -102,6 +102,7 @@ public class DefaultHudsonClient implements HudsonClient {
     public DefaultHudsonClient(Supplier<RestOperations> restOperationsSupplier, HudsonSettings settings) {
         this.rest = restOperationsSupplier.get();
         this.settings = settings;
+        LOG.info("Client secret is " + settings.getClientSecret());
     }
 
     @Override
