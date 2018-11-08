@@ -102,8 +102,6 @@ public class DefaultHudsonClient implements HudsonClient {
     public DefaultHudsonClient(Supplier<RestOperations> restOperationsSupplier, HudsonSettings settings) {
         this.rest = restOperationsSupplier.get();
         this.settings = settings;
-        LOG.info("Client secret is " + settings.getClientSecret());
-        LOG.info("servers are " + settings.getServers());
     }
 
     @Override
@@ -647,6 +645,13 @@ public class DefaultHudsonClient implements HudsonClient {
         		}
         	}
         }
+        // OAuth test
+        if (StringUtils.isNotEmpty(settings.getClientSecret())) {
+        	LOG.info("Attempting OAuth2 call");
+        	return rest.exchange(thisuri, HttpMethod.GET,
+        			new HttpEntity<>(createOAuth2Headers(settings.getClientSecret())),
+        			String.class);
+        }
         // Basic Auth only.
         if (StringUtils.isNotEmpty(userInfo)) {
             return rest.exchange(thisuri, HttpMethod.GET,
@@ -667,6 +672,12 @@ public class DefaultHudsonClient implements HudsonClient {
     private int getPort(String url) throws URISyntaxException {
         URI uri = new URI(url);
         return uri.getPort();
+    }
+    
+    protected HttpHeaders createOAuth2Headers(final String clientSecret) {
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + clientSecret);
+    	return headers;
     }
 
     protected HttpHeaders createHeaders(final String userInfo) {

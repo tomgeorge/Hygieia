@@ -24,6 +24,7 @@ public class HudsonSettings {
     private List<String> apiKeys;
     private String dockerLocalHostIP; //null if not running in docker on http://localhost
     private int pageSize;
+    private String clientId;
     private String clientSecret;
     @Value("${folderDepth:10}")
     private int folderDepth;
