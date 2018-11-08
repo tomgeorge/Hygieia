@@ -125,4 +125,12 @@ public class HudsonSettings {
     public void setClientSecret(String clientSecret) {
     	this.clientSecret = clientSecret;
     }
+    
+    public String getClientId() {
+    	return clientId;
+    }
+    
+    public void setClientId(String clientId) {
+    	this.clientId = clientId;
+    }
 }
